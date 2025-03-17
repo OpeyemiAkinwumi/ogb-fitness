@@ -7,6 +7,7 @@ import ProductHeader from "../components/ProductHeader";
 
 function Products({ productsList }) {
   const [isLoading, setIsLoading] = useState(true);
+  
 
   useEffect(() => {
     setTimeout(() => {

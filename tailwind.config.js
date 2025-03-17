@@ -11,6 +11,7 @@ export default {
         primary: "#FDAC07",
         secondary: "#47802B",
         dark: "#03161D",
+        darkShade: "#3E3D3D",
         // neutral: colors.gray,
       },
       backgroundImage: {
