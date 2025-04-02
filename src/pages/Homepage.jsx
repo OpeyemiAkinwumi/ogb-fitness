@@ -3,6 +3,7 @@ import { HiChevronLeft } from "react-icons/hi2";
 import { HiChevronRight } from "react-icons/hi2";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 const headlineList = [
   {
@@ -46,12 +47,17 @@ const productList = [
 
 function Homepage() {
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
   }, []);
+
+  function handleShop() {
+    navigate("/products");
+  }
 
   return (
     <>
@@ -84,7 +90,10 @@ function Homepage() {
           </div>
 
           <div className="w-full mt-14 flex justify-center items-center">
-            <button className="bg-primary text-white px-5 py-2 text-xl font-primary">
+            <button
+              onClick={handleShop}
+              className="bg-primary text-white px-5 py-2 text-xl font-primary"
+            >
               SHOP NOW
             </button>
           </div>
@@ -93,6 +102,7 @@ function Homepage() {
 
       {/* Section 3 */}
       <Banner
+        onClick={handleShop}
         image="images/lady-plank.jpg"
         element={
           <h3 className="font-primary text-center text-3xl lg:text-4xl mb-7 leading-snug">
@@ -145,6 +155,7 @@ function Homepage() {
 
       {/* Section 5 */}
       <Banner
+        onClick={handleShop}
         image="images/tools.jpg"
         element={
           <h3 className="font-primary text-center text-3xl lg:text-4xl mb-7 leading-snug">
@@ -270,7 +281,7 @@ function ProductHeaders({ title, price, image, isLoading }) {
   );
 }
 
-function Banner({ image, element, description }) {
+function Banner({ image, element, description, onClick }) {
   return (
     <section
       className="w-full h-[500px] flex justify-center items-center text-white"
@@ -285,7 +296,10 @@ function Banner({ image, element, description }) {
         <p className="font-secondary font-light text-xs lg:text-sm  text-center  ">
           {description}
         </p>
-        <button className="bg-primary text-white px-5 py-2 text-xs font-primary mt-16">
+        <button
+          onClick={onClick}
+          className="bg-primary text-white px-5 py-2 text-xs font-primary mt-16"
+        >
           BROWSE OUR COLLECTION
         </button>
       </div>
