@@ -9,7 +9,8 @@ import { FaArrowAltCircleRight } from "react-icons/fa";
 import Footer from "../components/Footer";
 import Navigation from "../components/Navigation";
 // import { useParams } from "react-router";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { ProductContext } from "../context/ProductContext";
 
 // const baseUrl = `images/`;
 
@@ -47,6 +48,9 @@ const additionalInfo = {
 // function ProductDescription({ productList }) {
 function ProductDescription() {
   const [quantity, setQuantity] = useState(1);
+
+  const { products } = useContext(ProductContext);
+  console.log(products);
 
   // const { productId } = useParams();
 
@@ -179,10 +183,12 @@ function Features({ info }) {
         <div className="mb-5 w-full lg:mb-0" key={item.feature}>
           <div className="flex h-[40px] w-full items-center justify-start gap-2">
             <div className="h-full w-[1.3px] rounded-full bg-secondary"></div>
-            <h3 className="font-medium lg:font-normal text-secondary mr-5 text-sm">{item.feature}</h3>
-            <div className="hidden lg:block h-[1.3px] w-[30%] rounded-full bg-secondary"></div>
+            <h3 className="mr-5 text-sm font-medium text-secondary lg:font-normal">
+              {item.feature}
+            </h3>
+            <div className="hidden h-[1.3px] w-[30%] rounded-full bg-secondary lg:block"></div>
           </div>
-          <p className="text-justify text-xs font-light leading-relaxed lg:leading-loose lg:text-left">
+          <p className="text-justify text-xs font-light leading-relaxed lg:text-left lg:leading-loose">
             {item.description}
           </p>
         </div>
