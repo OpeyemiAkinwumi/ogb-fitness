@@ -11,7 +11,7 @@ function Products() {
 
   const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
-    queryFn: () => getProducts(),
+    queryFn: getProducts,
   });
 
   console.log(products, isLoading);

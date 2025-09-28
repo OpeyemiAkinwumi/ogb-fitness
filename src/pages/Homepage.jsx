@@ -4,6 +4,8 @@ import { HiChevronRight } from "react-icons/hi2";
 import Footer from "../components/Footer";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "../services/apiProducts";
 
 const headlineList = [
   {
@@ -18,42 +20,56 @@ const headlineList = [
   { title: `YOGA & PILATES`, image: "images/Yoga.jpg" },
 ];
 
-const productList = [
-  {
-    title: `Mega Skipping Rope`,
-    // link:
-    image: "images/rope.jpg",
-    price: "₦10,000",
-  },
-  {
-    title: `Yoga Mat`,
-    // link:
-    image: "images/yoga-mat.jpg",
-    price: "₦40,000",
-  },
-  {
-    title: `Resistant Band`,
-    // link:
-    image: "images/resistant-band.jpg",
-    price: "₦7,000",
-  },
-  {
-    title: "Boxing Glove",
-    // link:
-    image: "images/boxing-glove.jpg",
-    price: "₦150,000",
-  },
-];
+// const productList = [
+//   {
+//     title: `Mega Skipping Rope`,
+//     // link:
+//     image: "images/rope.jpg",
+//     price: "₦10,000",
+//   },
+//   {
+//     title: `Yoga Mat`,
+//     // link:
+//     image: "images/yoga-mat.jpg",
+//     price: "₦40,000",
+//   },
+//   {
+//     title: `Resistant Band`,
+//     // link:
+//     image: "images/resistant-band.jpg",
+//     price: "₦7,000",
+//   },
+//   {
+//     title: "Boxing Glove",
+//     // link:
+//     image: "images/boxing-glove.jpg",
+//     price: "₦150,000",
+//   },
+// ];
 
 function Homepage() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [four, setFour] = useState([]);
   const navigate = useNavigate();
 
+  const { data: products, isLoading } = useQuery({
+    queryKey: ["productsHome"],
+    queryFn: getProducts,
+  });
+
+
+
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-  }, []);
+    if (products) {
+      setFour(products.slice(0, 4));
+    }
+  }, [products]);
+  console.log(four);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 3000);
+  // }, []);
 
   function handleShop() {
     navigate("/products");
@@ -64,35 +80,39 @@ function Homepage() {
       <Header />
 
       {/* Section 2 */}
-      <section className="w-full h-auto py-20 flex justify-center items-center">
-        <div className="w-[92%] lg:w-4/5 h-full">
-          <div className="w-full grid gap-6 md:gap-5 lg:gap-8 grid-cols-1 md:grid-cols-3">
-            {headlineList.map((item) => (
+      <section className="flex h-auto w-full items-center justify-center py-20">
+        <div className="h-full w-[92%] lg:w-4/5">
+          <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3 md:gap-5 lg:gap-8">
+            {headlineList.map((item, index) => (
               <Headlines
                 title={item.title}
-                key={item.index}
+                key={index}
                 image={item.image}
                 isLoading={isLoading}
               />
             ))}
           </div>
           <HomeHeaders title="TRENDING" description="NEW ARRIVAL" />
-          <div className="w-full grid gap-6 md:gap-5 lg:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-            {productList.map((item) => (
-              <ProductHeaders
-                title={item.title}
-                key={item.index}
-                image={item.image}
-                price={item.price}
-                isLoading={isLoading}
-              />
-            ))}
+          <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:gap-5 lg:grid-cols-4 lg:gap-8">
+            {isLoading ? (
+              <p>Loading</p>
+            ) : (
+              four.map((item) => (
+                <ProductHeaders
+                  title={item.name}
+                  key={item.id}
+                  image={item.image}
+                  price={item.price}
+                  // isLoading={isLoading}
+                />
+              ))
+            )}
           </div>
 
-          <div className="w-full mt-14 flex justify-center items-center">
+          <div className="mt-14 flex w-full items-center justify-center">
             <button
               onClick={handleShop}
-              className="bg-primary text-white px-5 py-2 text-xl font-primary"
+              className="bg-primary px-5 py-2 font-primary text-xl text-white"
             >
               SHOP NOW
             </button>
@@ -105,7 +125,7 @@ function Homepage() {
         onClick={handleShop}
         image="images/lady-plank.jpg"
         element={
-          <h3 className="font-primary text-center text-3xl lg:text-4xl mb-7 leading-snug">
+          <h3 className="mb-7 text-center font-primary text-3xl leading-snug lg:text-4xl">
             Elevate <br /> Your worout
           </h3>
         }
@@ -113,11 +133,11 @@ function Homepage() {
       />
 
       {/* Section 4 (About) */}
-      <section className="w-full flex justify-center items-center py-5 lg:py-20">
+      <section className="flex w-full items-center justify-center py-5 lg:py-20">
         <div id="about" className="w-[90%] lg:w-4/5">
-          <div className="w-full h-auto  lg:h-[320px] lg:flex flex-row-reverse items-center">
+          <div className="h-auto w-full flex-row-reverse items-center lg:flex lg:h-[320px]">
             <HomeHeaders title="About" description="OGB FITNESS" />
-            <p className="w-full font-secondary text-sm lg:text-base flex items-center text-justify justify-center">
+            <p className="flex w-full items-center justify-center text-justify font-secondary text-sm lg:text-base">
               At OGB Fitness, we believe that fitness is more than just a
               routine—it’s a lifestyle. That’s why we’re dedicated to providing
               high-quality fitness accessories designed to support your journey
@@ -128,7 +148,7 @@ function Homepage() {
               durability, and functionality.
             </p>
           </div>
-          <div className="w-full h-auto grid grid-cols-1 md:grid-cols-2 py-16">
+          <div className="grid h-auto w-full grid-cols-1 py-16 md:grid-cols-2">
             <HomeHeaders title="WHY CHOOSE" description="OGB FITNESS" />
             <AboutOptions
               title="Premium Quality"
@@ -136,14 +156,14 @@ function Homepage() {
               image="images/premium.jpg"
             />
           </div>
-          <div className="w-full h-auto py-5 lg:py-0">
+          <div className="h-auto w-full py-5 lg:py-0">
             <AboutOptions
               title="Designed for All"
               description="From beginners to fitness enthusiasts, our products cater to all levels and help you reach your goals."
               image="images/for-all.jpg"
             />
           </div>
-          <div className="w-full h-auto py-5 lg:py-0 flex justify-end items-center">
+          <div className="flex h-auto w-full items-center justify-end py-5 lg:py-0">
             <AboutOptions
               title="Commitment to Excellence"
               description="We’re passionate about delivering value through innovative designs and unmatched customer support."
@@ -158,7 +178,7 @@ function Homepage() {
         onClick={handleShop}
         image="images/tools.jpg"
         element={
-          <h3 className="font-primary text-center text-3xl lg:text-4xl mb-7 leading-snug">
+          <h3 className="mb-7 text-center font-primary text-3xl leading-snug lg:text-4xl">
             The Tools You Need <br />
             for the Results You Want
           </h3>
@@ -167,14 +187,14 @@ function Homepage() {
       />
 
       {/* Section 6 (Testimonial) */}
-      <section className="w-full lg:h-screen flex justify-center items-center py-20">
-        <div className="w-[90%] lg:w-4/5 h-full flex flex-col justify-start items-center">
-          <h3 className="font-secondary text-3xl font-bold text-center">
+      <section className="flex w-full items-center justify-center py-20 lg:h-screen">
+        <div className="flex h-full w-[90%] flex-col items-center justify-start lg:w-4/5">
+          <h3 className="text-center font-secondary text-3xl font-bold">
             TESTIMONIALS
           </h3>
-          <div className="w-4/5 flex justify-between items-center mt-7 lg:mt-auto">
-            <div className="w-[25px] hidden lg:flex h-[25px] rounded-full border-primary border-2  justify-center items-center ">
-              <HiChevronLeft className="text-primary stroke-[1.5px]" />
+          <div className="mt-7 flex w-4/5 items-center justify-between lg:mt-auto">
+            <div className="hidden h-[25px] w-[25px] items-center justify-center rounded-full border-2 border-primary lg:flex">
+              <HiChevronLeft className="stroke-[1.5px] text-primary" />
             </div>
             <Reviews
               customerName="Hillary Clinton"
@@ -182,8 +202,8 @@ function Homepage() {
               jobTitle="Junior Frontend Developer"
               review="OGB Fitness gear is premium and durable! Yoga mat, resistance bands, and gloves exceeded expectations. Highly recommend for upgrades!"
             />
-            <div className="w-[25px] h-[25px] hidden rounded-full border-primary border-2 lg:flex justify-center items-center ">
-              <HiChevronRight className="text-primary stroke-[1.5px]" />
+            <div className="hidden h-[25px] w-[25px] items-center justify-center rounded-full border-2 border-primary lg:flex">
+              <HiChevronRight className="stroke-[1.5px] text-primary" />
             </div>
           </div>
         </div>
@@ -202,19 +222,19 @@ export default Homepage;
 
 function Reviews({ customerName, jobTitle, review, customerImage }) {
   return (
-    <div className="w-full lg:w-[700px]  lg:h-[500px] lg:flex justify-between items-center">
+    <div className="w-full items-center justify-between lg:flex lg:h-[500px] lg:w-[700px]">
       <div
         style={{
           backgroundImage: `url(${customerImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-        className="w-full lg:w-[330px] h-[300px] lg:h-full mb-5 lg:mb-0 "
+        className="mb-5 h-[300px] w-full lg:mb-0 lg:h-full lg:w-[330px]"
       ></div>
-      <div className="w-full lg:w-[350px] h-auto lg:h-full flex flex-col justify-center items-center lg:items-start space-y-2">
+      <div className="flex h-auto w-full flex-col items-center justify-center space-y-2 lg:h-full lg:w-[350px] lg:items-start">
         <h5 className="font-primary text-secondary">{customerName}</h5>
         <p className="font-secondary text-xs font-medium">{jobTitle}</p>
-        <p className="font-secondary text-xs text-center lg:text-left font-light">
+        <p className="text-center font-secondary text-xs font-light lg:text-left">
           {review}
         </p>
       </div>
@@ -230,15 +250,15 @@ function Headlines({ title, image, isLoading }) {
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
-      className={`w-full h-[230px] flex flex-col justify-center items-start text-white px-12 py-10 transition-all ease-in-out duration-1000 ${
-        isLoading ? "blur-sm opacity-15 " : ""
+      className={`flex h-[230px] w-full flex-col items-start justify-center px-12 py-10 text-white transition-all duration-1000 ease-in-out ${
+        isLoading ? "opacity-15 blur-sm" : ""
       } `}
     >
       <img src="/images/slash.svg" alt="" />
-      <h2 className="text-xl font-secondary max-w-[50%] font-semibold leading-tight mt-5">
+      <h2 className="mt-5 max-w-[50%] font-secondary text-xl font-semibold leading-tight">
         {title}
       </h2>
-      <button className="font-primary bg-primary px-4 py-2 text-xs rounded-md mt-auto">
+      <button className="mt-auto rounded-md bg-primary px-4 py-2 font-primary text-xs">
         Upgrade Now
       </button>
     </div>
@@ -247,15 +267,15 @@ function Headlines({ title, image, isLoading }) {
 
 function HomeHeaders({ title, description }) {
   return (
-    <div className="mx-auto w-full my-14 flex flex-col justify-center items-center">
-      <div className="w-auto flex justify-center items-center gap-3">
+    <div className="mx-auto my-14 flex w-full flex-col items-center justify-center">
+      <div className="flex w-auto items-center justify-center gap-3">
         <div className="h-[1px] w-[70px] bg-secondary"></div>
-        <p className="text-secondary font-secondary text-xs font-semibold">
+        <p className="font-secondary text-xs font-semibold text-secondary">
           {title}
         </p>
         <div className="h-[1px] w-[70px] bg-secondary"></div>
       </div>
-      <h2 className="text-3xl mt-3 font-bold font-secondary">{description}</h2>
+      <h2 className="mt-3 font-secondary text-3xl font-bold">{description}</h2>
     </div>
   );
 }
@@ -263,8 +283,8 @@ function HomeHeaders({ title, description }) {
 function ProductHeaders({ title, price, image, isLoading }) {
   return (
     <div
-      className={`w-full h-[350px] lg:h-[400px] flex flex-col justify-start items-center lg:items-start space-y-2 transition-all ease-in-out duration-1000 ${
-        isLoading ? "blur-sm opacity-15 " : ""
+      className={`flex h-[350px] w-full flex-col items-center justify-start space-y-2 transition-all duration-1000 ease-in-out lg:h-[400px] lg:items-start ${
+        isLoading ? "opacity-15 blur-sm" : ""
       } `}
     >
       <div
@@ -273,10 +293,10 @@ function ProductHeaders({ title, price, image, isLoading }) {
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-        className="w-full h-[280px] lg:h-[330px] "
+        className="h-[280px] w-full lg:h-[330px]"
       ></div>
       <h3 className="font-primary text-sm">{title}</h3>
-      <p className="font-secondary text-2xl ">{price}</p>
+      <p className="font-secondary text-2xl">{price}</p>
     </div>
   );
 }
@@ -284,21 +304,21 @@ function ProductHeaders({ title, price, image, isLoading }) {
 function Banner({ image, element, description, onClick }) {
   return (
     <section
-      className="w-full h-[500px] flex justify-center items-center text-white"
+      className="flex h-[500px] w-full items-center justify-center text-white"
       style={{
         backgroundImage: `linear-gradient(to bottom, rgb(0,0,0,0.6), rgb(0,0,0,0.6)), url(${image})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="w-[92%] lg:w-4/5 h-full flex flex-col justify-center items-center py-14">
+      <div className="flex h-full w-[92%] flex-col items-center justify-center py-14 lg:w-4/5">
         {element}
-        <p className="font-secondary font-light text-xs lg:text-sm  text-center  ">
+        <p className="text-center font-secondary text-xs font-light lg:text-sm">
           {description}
         </p>
         <button
           onClick={onClick}
-          className="bg-primary text-white px-5 py-2 text-xs font-primary mt-16"
+          className="mt-16 bg-primary px-5 py-2 font-primary text-xs text-white"
         >
           BROWSE OUR COLLECTION
         </button>
@@ -309,18 +329,18 @@ function Banner({ image, element, description, onClick }) {
 
 function AboutOptions({ title, description, image }) {
   return (
-    <div className="w-full lg:w-[500px] h-auto lg:h-[350px] space-y-4 lg:space-y-0 lg:flex justify-start gap-3 items-center">
+    <div className="h-auto w-full items-center justify-start gap-3 space-y-4 lg:flex lg:h-[350px] lg:w-[500px] lg:space-y-0">
       <div
-        className="w-full lg:w-[210px] h-[300px] lg:h-full "
+        className="h-[300px] w-full lg:h-full lg:w-[210px]"
         style={{
           backgroundImage: `url(${image})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       ></div>
-      <div className="w-full lg:w-[250px] h-auto lg:h-full px-4 lg:px-0 flex flex-col  justify-center items-center lg:items-start ">
-        <h4 className="font-primary  text-secondary mb-2">{title}</h4>
-        <p className="font-secondary text-center lg:text-left  text-sm">
+      <div className="flex h-auto w-full flex-col items-center justify-center px-4 lg:h-full lg:w-[250px] lg:items-start lg:px-0">
+        <h4 className="mb-2 font-primary text-secondary">{title}</h4>
+        <p className="text-center font-secondary text-sm lg:text-left">
           {description}
         </p>
       </div>
